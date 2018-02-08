@@ -9,15 +9,9 @@ namespace CoinTreeViewer.Database
     {
         public DbSet<DbPrice> Prices { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
         {
-            optionsBuilder.UseSqlite("Data Source=prices.db");
-        }
-
-        public DbPrice GetLatestPrice()
-        {
-            return new DbPrice();
-            return Prices.OrderByDescending(price => price.Timestamp).FirstOrDefault();
         }
     }
 }

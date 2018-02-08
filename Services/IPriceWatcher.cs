@@ -11,6 +11,6 @@ namespace CoinTreeViewer.Services
         /// <summary>
         /// Starts endless watcher in background thread
         /// </summary>
-        void Start();
+        void Start(CurrencyPrice latestPrice = null);
     }    
 }

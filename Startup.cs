@@ -11,7 +11,8 @@ using MassTransit;
 using AutoMapper;
 using CoinTreeViewer.Database;
 using CoinTreeViewer.Services;
-
+using MassTransit.ExtensionsDependencyInjectionIntegration;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoinTreeViewer
 {
@@ -30,26 +31,26 @@ namespace CoinTreeViewer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(cfg => AutoMapperConfig.Configure(cfg));
-            // services.AddMassTransit(cfg =>
-            // {
-            //     cfg.AddConsumer<DbPriceConsumer>();
-            //     cfg.AddConsumer<CoinTreeWatcher>();
-            // });
-
-            var messageBus = Bus.Factory.CreateUsingInMemory(configure =>
+            services.AddMassTransit(cfg => 
             {
-                configure.ReceiveEndpoint("cointree_prices", endpoint => {
-                    endpoint.Consumer<DbPriceConsumer1>();
-                    // endpoint.Consumer<CoinTreeWatcher1>();
-                });
+                cfg.AddConsumer<DbPriceConsumer>();
             });
             
-
             services.AddSignalR();
             services.AddScoped<PriceWatcherHub>();
-            services.AddScoped<IPriceWatcher, CoinTreeWatcher>();
+            services.AddSingleton<IPriceWatcher, CoinTreeWatcher>();
             services.AddScoped<DbPriceConsumer>();
-            services.AddSingleton<IBus>(messageBus);
+            services.AddSingleton<IBus>(provider =>
+            {
+                return Bus.Factory.CreateUsingInMemory(configure =>
+                {
+                    configure.ReceiveEndpoint("cointree_prices", endpoint => {
+                        endpoint.LoadFrom(provider);
+                    });
+                });
+            });
+            services.AddEntityFrameworkSqlite();
+            services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=prices.db")); //only for development
 
             services.AddMemoryCache();
             services.AddMvc();
@@ -62,6 +63,19 @@ namespace CoinTreeViewer
                             IHostingEnvironment env,
                             IServiceProvider serviceProvider)
         {
+            var messageBus = serviceProvider.GetService<IBus>();
+            var priceWatcher = serviceProvider.GetService<IPriceWatcher>();
+            var dbPriceConsumer = serviceProvider.GetService<DbPriceConsumer>();
+            var dbContext = serviceProvider.GetService<AppDbContext>();
+
+            // Migrate db to latest state
+            dbContext.Database.Migrate();
+            
+            // Start message bus
+            (messageBus as IBusControl).Start();
+            // Start price watcher for CoinTree API.
+            priceWatcher.Start(dbPriceConsumer.GetLatestPrice());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -93,17 +107,6 @@ namespace CoinTreeViewer
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
-
-            var messageBus = serviceProvider.GetService<IBus>();
-            var priceWatcher = serviceProvider.GetService<IPriceWatcher>();
-
-            messageBus.ConnectInstance(serviceProvider.GetService<DbPriceConsumer>());
-            messageBus.ConnectInstance(priceWatcher);
-
-            (messageBus as IBusControl).Start();
-            messageBus.Publish(new CoinTreeViewer.Models.CurrencyPrice() {Name = "HJdkf"});
-
-            priceWatcher.Start();
         }
     }
 }

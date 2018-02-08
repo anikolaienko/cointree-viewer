@@ -13,18 +13,11 @@ using CoinTreeViewer.Models;
 
 namespace CoinTreeViewer.Services
 {
-    public class CoinTreeWatcher1 : IConsumer<LatestPrice>
-    {
-        public async Task Consume(ConsumeContext<LatestPrice> context)
-        {
-        }
-    }
-
     public class CoinTreeWatcher : IPriceWatcher
     {
         private const string BTCPriceUrl = "https://api.cointree.com.au/v1/price/btc/aud";
         private const string CurrencyName = "Bitcoin";
-        private readonly TimeSpan _updateInterval = TimeSpan.FromSeconds(30);
+        private readonly TimeSpan _updateInterval = TimeSpan.FromSeconds(5);
         private readonly IHubContext<PriceWatcherHub> _clients;
         private readonly ILogger _logger;
         private readonly IBus _messageBus;
@@ -43,8 +36,16 @@ namespace CoinTreeViewer.Services
         /// <summary>
         /// Starts endless watcher in background thread
         /// </summary>
-        public void Start()
+        public void Start(CurrencyPrice latestPrice = null)
         {
+            _latestPrice = latestPrice;
+            
+            if (latestPrice == null)
+            {
+                // for very first launch when there is no initial value from DB.
+                FillPrice(null);
+            }
+
             if (_timer != null)
             {
                 _timer.Dispose();

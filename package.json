@@ -2,12 +2,13 @@
   "name": "CoinTreeViewer",
   "private": true,
   "version": "0.0.0",
-  "devDependencies": {
+  "dependencies": {
     "@aspnet/signalr-client": "^1.0.0-alpha2-final",
     "@types/history": "4.6.0",
     "@types/react": "15.0.35",
     "@types/react-dom": "15.5.1",
     "@types/react-hot-loader": "3.0.3",
+    "@types/react-notification-system": "^0.2.35",
     "@types/react-router": "4.0.12",
     "@types/react-router-dom": "4.0.5",
     "@types/webpack-env": "1.13.0",
@@ -22,17 +23,16 @@
     "isomorphic-fetch": "2.2.1",
     "jquery": "3.2.1",
     "json-loader": "0.5.4",
+    "popper.js": "^1.12.9",
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "react-hot-loader": "3.0.0-beta.7",
+    "react-notification-system": "^0.2.16",
     "react-router-dom": "4.1.1",
     "style-loader": "0.18.2",
     "typescript": "2.4.1",
     "url-loader": "0.5.9",
     "webpack": "2.5.1",
     "webpack-hot-middleware": "2.18.2"
-  },
-  "dependencies": {
-    "popper.js": "^1.12.9"
   }
 }

@@ -74,3 +74,47 @@ html {
 .border-box col {
     border: 2px solid black;
 }
+
+.price-down {
+    color: rgb(173, 3, 3);
+}
+.price-down::before {
+    content: "";
+    width: 0;
+    height: 0;
+    position: relative;
+    top: 20px;
+    right: 5px;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 20px solid rgb(173, 3, 3);
+}
+.price-down::after {
+    content: " %"
+}
+
+.price-up {
+    color: rgb(28, 173, 28);
+}
+.price-up::before {
+    content: "";
+    width: 0;
+    height: 0;
+    position: relative;
+    bottom: 20px;
+    right: 5px;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-bottom: 20px solid rgb(28, 173, 28);
+}
+.price-up::after {
+    content: " %"
+}
+
+.price::before {
+    content: "$ "
+}
+
+.desired {
+    border: 5px rgb(34, 196, 34) solid;
+}

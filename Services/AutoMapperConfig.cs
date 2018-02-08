@@ -11,6 +11,9 @@ namespace CoinTreeViewer.Services
             mapper.CreateMap<DbPrice, CurrencyPrice>()
                 .ForMember(price => price.BuyPriceDiff, opt => opt.Ignore())
                 .ForMember(price => price.SellPriceDiff, opt => opt.Ignore());
+
+            mapper.CreateMap<CurrencyPrice, DbPrice>()
+                .ForMember(price => price.Id, opt => opt.Ignore());
         }
     }
 }
