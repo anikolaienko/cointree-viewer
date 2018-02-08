@@ -18,6 +18,8 @@ namespace CoinTreeViewer
 {
     public class Startup
     {
+        private IBusControl _messageBus;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -56,13 +58,23 @@ namespace CoinTreeViewer
             services.AddMvc();
         }
 
+        private void OnShutdown()
+        {
+            if (_messageBus != null)
+            {
+                _messageBus.Stop();
+            }
+        }
+
         /// <summary>
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         public void Configure(IApplicationBuilder app,
                             IHostingEnvironment env,
-                            IServiceProvider serviceProvider)
+                            IServiceProvider serviceProvider,
+                            IApplicationLifetime applicationLifetime)
         {
+            applicationLifetime.ApplicationStopping.Register(OnShutdown);
             var messageBus = serviceProvider.GetService<IBus>();
             var priceWatcher = serviceProvider.GetService<IPriceWatcher>();
             var dbPriceConsumer = serviceProvider.GetService<DbPriceConsumer>();
@@ -72,7 +84,8 @@ namespace CoinTreeViewer
             dbContext.Database.Migrate();
             
             // Start message bus
-            (messageBus as IBusControl).Start();
+            _messageBus = (messageBus as IBusControl);
+            _messageBus.Start();
             // Start price watcher for CoinTree API.
             priceWatcher.Start(dbPriceConsumer.GetLatestPrice());
 

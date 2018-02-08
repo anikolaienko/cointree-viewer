@@ -17,7 +17,7 @@ namespace CoinTreeViewer.Services
     {
         private const string BTCPriceUrl = "https://api.cointree.com.au/v1/price/btc/aud";
         private const string CurrencyName = "Bitcoin";
-        private readonly TimeSpan _updateInterval = TimeSpan.FromSeconds(5);
+        private readonly TimeSpan _updateInterval = TimeSpan.FromSeconds(30);
         private readonly IHubContext<PriceWatcherHub> _clients;
         private readonly ILogger _logger;
         private readonly IBus _messageBus;

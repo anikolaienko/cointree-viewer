@@ -76,13 +76,13 @@ export class FetchPrices extends React.Component<{}, FetchPricesState> {
                 </tr>
                 <tr>
                     <td>Desired Buy Price</td>
-                    <td className="price"><input className={this.state.desiredBuyPrice != 0
-                        && this.state.desiredBuyPrice >= this.state.price.buyPrice
+                    <td className="price"><input className={this.state.desiredBuyPrice >= this.state.price.buyPrice
                             ? "desired"
                             : ""}
                         type="number" step="0.01" value={this.state.desiredBuyPrice} onChange={this.handleBuyChange}/></td>
                     <td>Desired Sell Price</td>
                     <td className="price"><input className={this.state.desiredSellPrice <= this.state.price.sellPrice
+                        && this.state.desiredSellPrice != 0
                             ? "desired"
                             : ""}
                         type="number" step="0.01" value={this.state.desiredSellPrice}/></td>

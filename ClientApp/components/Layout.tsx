@@ -10,7 +10,7 @@ export class Layout extends React.Component<LayoutProps, {}> {
     public render() {
         return <div className='container'>
             { this.props.children }
-            <History />
+            {/* <History /> */}
         </div>;
     }
 }

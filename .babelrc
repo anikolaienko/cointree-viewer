@@ -1,0 +1,7 @@
+{
+    "useBabel": true,
+    "babelOptions": {
+        "babelrc": false
+    },
+    "babelCore": "@babel/core"
+}

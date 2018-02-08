@@ -31,9 +31,23 @@ namespace CoinTreeViewer.Services
             DbPrice dbPrice = null;
             try
             {
-                dbPrice = _dbContext.Prices
+                var prices = _dbContext.Prices
                     .OrderByDescending(price => price.Timestamp)
-                    .FirstOrDefault();
+                    .Take(2);
+                dbPrice = prices.FirstOrDefault();
+                if (dbPrice != null)
+                {
+                    var previousPrice = prices.LastOrDefault();
+                    if (previousPrice != dbPrice)
+                    {
+                        var resultPrice = _mapper.Map<CurrencyPrice>(dbPrice);
+                        // TODO: difference should be stored in DB, this calculations should not be in that class.
+                        resultPrice.BuyPriceDiff = (dbPrice.BuyPrice - previousPrice.BuyPrice) / previousPrice.BuyPrice;
+                        resultPrice.SellPriceDiff = (dbPrice.SellPrice - previousPrice.SellPrice) / previousPrice.SellPrice;
+
+                        return resultPrice;
+                    }
+                }
             }
             catch(SqliteException ex)
             {

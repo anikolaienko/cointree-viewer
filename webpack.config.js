@@ -18,7 +18,7 @@ module.exports = (env) => {
         },
         module: {
             rules: [
-                { test: /\.tsx?$/, include: /ClientApp/, use: 'awesome-typescript-loader?silent=true' },
+                { test: /\.tsx?$/, include: /ClientApp/, use: 'awesome-typescript-loader?silent=true',  },
                 { test: /\.css$/, use: extractCSS.extract('css-loader') },
                 { test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=25000' }
             ]
@@ -38,7 +38,7 @@ module.exports = (env) => {
             })
         ] : [
             // Plugins that apply in production builds only
-            new webpack.optimize.UglifyJsPlugin(),
+            // new webpack.optimize.UglifyJsPlugin(),
             new ExtractTextPlugin('site.css')
         ])
     }];
