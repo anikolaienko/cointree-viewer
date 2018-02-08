@@ -237,3 +237,6 @@ _Pvt_Extensions
 
 # Database
 *.db
+
+# VS Code
+.vscode/
